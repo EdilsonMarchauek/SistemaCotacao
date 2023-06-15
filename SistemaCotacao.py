@@ -3,7 +3,11 @@ from tkinter import ttk
 # pip install tkcalendar
 from tkcalendar import DateEntry
 # pip install requests
+from tkinter.filedialog import askopenfilename
+import pandas as pd
 import requests
+from datetime import datetime
+import numpy as np
 
 requisicao = requests.get('https://economia.awesomeapi.com.br/json/all')
 dicionario_moedas = requisicao.json()
@@ -23,12 +27,50 @@ def pegar_cotacao():
     valor_moeda = cotacao[0]['bid']
     label_textocotacao['text'] =f"A cotação da {moeda} no dia {data_cotacao} foi de: R$ {valor_moeda}"
 
+
 def selecionar_arquivo():
-    pass
+    caminho_arquivo = askopenfilename(title="Selecione o Arquivo de Moeda")
+    var_caminhoarquivo.set(caminho_arquivo)
+    if caminho_arquivo:
+        label_arquivoselecionado['text'] = f"Arquivo Selecionado: {caminho_arquivo}"
 
 
 def atualizar_cotacoes():
-    pass
+    try:
+        # ler o dataframe de moedas
+        df = pd.read_excel(var_caminhoarquivo.get())
+        moedas = df.iloc[:, 0]
+        # pegar a data de inicio e data de fim das cotacoes
+        data_inicial = calendario_datainicial.get()
+        data_final = calendario_datafinal.get()
+        ano_inicial = data_inicial[-4:]
+        mes_inicial = data_inicial[3:5]
+        dia_inicial = data_inicial[:2]
+
+        ano_final = data_final[-4:]
+        mes_final = data_final[3:5]
+        dia_final = data_final[:2]
+
+        for moeda in moedas:
+            link = f"https://economia.awesomeapi.com.br/json/daily/{moeda}-BRL/31?" \
+                   f"start_date={ano_inicial}{mes_inicial}{dia_inicial}&" \
+                   f"end_date={ano_final}{mes_final}{dia_final}"
+
+            requisicao_moeda = requests.get(link)
+            cotacoes = requisicao_moeda.json()
+            for cotacao in cotacoes:
+                timestamp = int(cotacao['timestamp'])
+                bid = float(cotacao['bid'])
+                data = datetime.fromtimestamp(timestamp)
+                data = data.strftime('%d/%m/%Y')
+                if data not in df:
+                    df[data] = np.nan
+
+                df.loc[df.iloc[:, 0] == moeda, data] = bid
+        df.to_excel("Teste.xlsx")
+        label_atualizarcotacoes['text'] = "Arquivo Atualizado com Sucesso"
+    except:
+        label_atualizarcotacoes['text'] = "Selecione um arquivo Excel no Formato Correto"
 
 
 janela = tk.Tk()
@@ -65,6 +107,8 @@ label_cotacaovariasmoedas.grid(row=4, column=0, padx=10, pady=10, sticky='nswe',
 
 label_selecionararquivo = tk.Label(text="Selecione um arquivo em Excel com as Moedas na Coluna A")
 label_selecionararquivo.grid(row=5, column=0, padx=10, pady=10, sticky='nswe', columnspan=2)
+
+var_caminhoarquivo = tk.StringVar()
 
 botao_selecionararquivo = tk.Button(text="Clique para selecionar", command=selecionar_arquivo)
 botao_selecionararquivo.grid(row=5, column=2, padx=10, pady=10, sticky='nswe')
