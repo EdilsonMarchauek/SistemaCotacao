@@ -9,9 +9,9 @@ Os usuarios podem selecionar a moeda e o dia desejado e para pegar a cotação o
 <b>requests:</b> Biblioteca para fazer solicitações HTTP à API "awesomeapi" e obter os dados de cotação das moedas.<br>
 <b>pandas:</b> Biblioteca para manipulação de dados, usada para ler o arquivo Excel contendo as moedas a serem cotadas.<br>
 
-<b>Arquivo Excel:</b> Moedas.xlsx
-  A
-1 Moedas
-2 EUR
-3 USD
-4 BTC
+<b>Arquivo Excel:</b> Moedas.xlsx<br>
+  A<br>
+1 Moedas<br>
+2 EUR<br>
+3 USD<br>
+4 BTC<br>
