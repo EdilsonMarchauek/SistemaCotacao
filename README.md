@@ -10,7 +10,7 @@ Os usuarios podem selecionar a moeda e o dia desejado e para pegar a cotação o
 <b>pandas:</b> Biblioteca para manipulação de dados, usada para ler o arquivo Excel contendo as moedas a serem cotadas.<br>
 
 <b>Arquivo Excel:</b> Moedas.xlsx<br>
-  A<br>
+&nbsp;&nbsp; A<br>
 1 Moedas<br>
 2 EUR<br>
 3 USD<br>
